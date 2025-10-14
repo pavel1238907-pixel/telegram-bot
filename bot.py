@@ -60,5 +60,5 @@ def main():
     # Запускаем бота
     application.run_polling()
 
-if name == "main":
+    if name == "main":
     main()
