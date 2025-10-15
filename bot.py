@@ -13,7 +13,9 @@ logging.basicConfig(
 TOKEN = os.getenv('TOKEN')
 RENDER_API_KEY = os.getenv('RENDER_API_KEY')
 
-print(f"🔧 Проверка переменных: TOKEN={'установлен' if TOKEN else 'НЕТ'}, API_KEY={'установлен' if RENDER_API_KEY else 'НЕТ'}")
+print("🔧 Проверка переменных окружения:")
+print(f"TOKEN: {'✅ установлен' if TOKEN else '❌ отсутствует'}")
+print(f"RENDER_API_KEY: {'✅ установлен' if RENDER_API_KEY else '❌ отсутствует'}")
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
@@ -42,13 +44,16 @@ def main():
         return
     
     try:
+        # Создаем приложение с более старым синтаксисом для совместимости
         application = Application.builder().token(TOKEN).build()
         print("✅ Application создан")
         
+        # Добавляем обработчики
         application.add_handler(CommandHandler("start", start))
         application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, generate_image))
         print("✅ Обработчики добавлены")
         
+        # Запускаем бота
         print("🔄 Бот запущен и ожидает сообщения...")
         application.run_polling()
         
