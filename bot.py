@@ -1,11 +1,19 @@
 import os
-import requests
+import logging
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 
-# Конфигурация
-TOKEN = "8337981356:AAFEYQ16ZTPxlFTdz2Z1fu9QeGhQp5BGhLw"
-RENDER_API_KEY = "rnd_DbdO6fyNX19QUl9EDBR5XGtMTy6s"
+# Настройка логирования
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
+
+# Конфигурация из переменных окружения
+TOKEN = os.getenv('TOKEN')
+RENDER_API_KEY = os.getenv('RENDER_API_KEY')
+
+print(f"🔧 Проверка переменных: TOKEN={'установлен' if TOKEN else 'НЕТ'}, API_KEY={'установлен' if RENDER_API_KEY else 'НЕТ'}")
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
@@ -20,45 +28,34 @@ async def generate_image(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     try:
-        # Отправляем запрос в Render API
-        headers = {
-            "Authorization": f"Bearer {RENDER_API_KEY}",
-            "Content-Type": "application/json"
-        }
-        
-        data = {
-            "prompt": user_text,
-            "width": 512,
-            "height": 512
-        }
-        
-        response = requests.post(
-            "https://api.render.ai/v1/images/generate",
-            headers=headers,
-            json=data
-        )
-        
-        if response.status_code == 200:
-            image_url = response.json()["url"]
-            
-            # Отправляем изображение пользователю
-            await update.message.reply_photo(image_url)
-        else:
-            await update.message.reply_text("Ошибка генерации изображения. Попробуйте позже.")
-            
+        wait_message = await update.message.reply_text("🔄 Генерирую изображение...")
+        await context.bot.delete_message(chat_id=update.message.chat_id, message_id=wait_message.message_id)
+        await update.message.reply_text("⏳ Функция генерации настраивается...")
     except Exception as e:
-        await update.message.reply_text("Произошла ошибка. Попробуйте другой запрос.")
+        await update.message.reply_text(f"❌ Произошла ошибка: {str(e)}")
 
 def main():
-    # Создаем приложение
-    application = Application.builder().token(TOKEN).build()
+    print("🚀 Запуск бота...")
     
-    # Добавляем обработчики
-    application.add_handler(CommandHandler("start", start))
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, generate_image))
+    if not TOKEN:
+        print("❌ ОШИБКА: Не установлен TOKEN")
+        return
     
-    # Запускаем бота
-    application.run_polling()
+    try:
+        application = Application.builder().token(TOKEN).build()
+        print("✅ Application создан")
+        
+        application.add_handler(CommandHandler("start", start))
+        application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, generate_image))
+        print("✅ Обработчики добавлены")
+        
+        print("🔄 Бот запущен и ожидает сообщения...")
+        application.run_polling()
+        
+    except Exception as e:
+        print(f"❌ Критическая ошибка при запуске: {e}")
+        import traceback
+        traceback.print_exc()
 
-    if __name__ == "__main__":
-        main()
+if __name__ == "__main__":
+    main()
