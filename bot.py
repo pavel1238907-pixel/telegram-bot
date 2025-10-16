@@ -17,7 +17,7 @@ POLLINATIONS_BASE = "https://image.pollinations.ai/prompt/"
 if not TOKEN:
     raise RuntimeError("Не найден TG_BOT_TOKEN в переменных окружения")
 
-app = Flask(name)
+app = Flask(__name__)
 bot = Bot(token=TOKEN)
 
 
