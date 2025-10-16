@@ -1,4 +1,3 @@
-Павел, [16.10.2025 11:47]
 # bot.py
 # Python 3.8 — webhook версия, подходит для деплоя на Render
 import os
