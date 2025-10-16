@@ -1,9 +1,8 @@
-Павел, [16.10.2025 11:47]
 # bot.py
 # Python 3.8 — webhook версия, подходит для деплоя на Render
 import os
 import requests
-import time
+import time 
 from urllib.parse import quote_plus
 from flask import Flask, request, Response
 from telegram import Bot, InputFile
@@ -108,7 +107,6 @@ def webhook():
             except Exception:
                 pass
 
-Павел, [16.10.2025 11:47]
 # 6) Удаляем сообщение "Генерирую..."
         try:
             bot.delete_message(chat_id=chat_id, message_id=sending_msg.message_id)
