@@ -107,7 +107,6 @@ def webhook():
             except Exception:
                 pass
 
-Павел, [16.10.2025 11:47]
 # 6) Удаляем сообщение "Генерирую..."
         try:
             bot.delete_message(chat_id=chat_id, message_id=sending_msg.message_id)
