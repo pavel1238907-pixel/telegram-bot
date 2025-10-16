@@ -2,7 +2,7 @@
 # Python 3.8 — webhook версия, подходит для деплоя на Render
 import os
 import requests
-import time
+import time 
 from urllib.parse import quote_plus
 from flask import Flask, request, Response
 from telegram import Bot, InputFile
